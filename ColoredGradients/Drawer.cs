@@ -11,7 +11,9 @@ internal static class Drawer
     internal const int CELL_SIZE = 50;
     internal const int GRID_SIZE = 16;
 
-    private const int DELAY = 10;
+    internal static bool EndedDrawing { get; private set; }
+
+    private const int DELAY = 0;
 
     private static Canvas _drawingField;
 
@@ -19,6 +21,16 @@ internal static class Drawer
     private static GradientGenerator.GradientType _gradientType;
 
     private static double _red = 0, _green = 0, _blue = 0;
+
+    internal static void Redraw()
+    {
+        if (EndedDrawing)
+        {
+            _drawingField.Children.Clear();
+            SetDrawingType(_drawingType, _red, _green, _blue);
+            StartDrawing(_drawingField, _gradientType);
+        }
+    }
 
     internal static void SetDrawingType(DrawingType type, double red = 0, double green = 0, double blue = 0)
     {
@@ -34,17 +46,19 @@ internal static class Drawer
 
     internal static void StartDrawing(Canvas field, GradientGenerator.GradientType gradientType)
     {
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            Application.Current.MainWindow.Height = CELL_SIZE * GRID_SIZE;
-            Application.Current.MainWindow.Width = CELL_SIZE * GRID_SIZE;
-        });       
+        EndedDrawing = false;
+
+        Application.Current.MainWindow.Height = CELL_SIZE * GRID_SIZE;
+        Application.Current.MainWindow.Width = CELL_SIZE * GRID_SIZE;
 
         _gradientType = gradientType;
 
         _drawingField = field;
 
-        DrawingThread();
+        Thread thread = new(() => DrawingThread());
+        thread.SetApartmentState(ApartmentState.STA);
+
+        thread.Start();
     }
 
     private static void DrawingThread()
@@ -63,6 +77,8 @@ internal static class Drawer
                 Thread.Sleep(DELAY);
             }
         }
+
+        EndedDrawing = true;
     }
 
     private static SolidColorBrush GetColor(int shadeIndex)

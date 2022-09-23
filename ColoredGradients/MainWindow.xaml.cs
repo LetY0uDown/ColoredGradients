@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using System.Windows;
+﻿using System.Windows;
 
 namespace ColoredGradients;
 
@@ -9,14 +8,6 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
-        Thread thread = new(() => StartDrawing());
-        thread.SetApartmentState(ApartmentState.STA);
-
-        thread.Start();
-    }
-
-    private void StartDrawing()
-    {
         Drawer.SetDrawingType(Drawer.DrawingType.RandomMultipliedColor);
         Drawer.StartDrawing(Field, GradientGenerator.GradientType.FromOneCorner);
     }
@@ -29,5 +20,10 @@ public partial class MainWindow : Window
     private void Grid_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
         DragMove();
+    }
+
+    private void RedrawButtonClick(object sender, RoutedEventArgs e)
+    {
+        Drawer.Redraw();
     }
 }

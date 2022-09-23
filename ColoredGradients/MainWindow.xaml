@@ -10,6 +10,13 @@
 
     <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown">
 
+        <Grid.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="Exit" Click="ExitButtonClick" />
+                <MenuItem Header="Redraw" Click="RedrawButtonClick" />
+            </ContextMenu>
+        </Grid.ContextMenu>
+        
         <Canvas x:Name="Field" Grid.Row="1"/>
 
     </Grid>
